@@ -70,8 +70,17 @@ func main() {
 
 	// Connect Redis
 	rdb = redis.NewClient(&redis.Options{
-		Addr: fmt.Sprintf("%s:%s", config.AppConfig.REDIS_HOST, config.AppConfig.REDIS_PORT),
+		Addr: config.AppConfig.REDIS_URL, // Hoặc fmt.Sprintf("%s:%s", config.AppConfig.REDIS_HOST, config.AppConfig.REDIS_PORT)
+		DB:   0,
 	})
+
+	// Test Redis connection
+	_, err := rdb.Ping(ctx).Result()
+	if err != nil {
+		log.Fatalf("Could not connect to Redis: %v\n", err)
+	} else {
+		log.Println("Successfully connected to Redis")
+	}
 
 	// Set up routes
 	r.GET("/", homeHandler)
